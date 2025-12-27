@@ -1,10 +1,29 @@
-# Use official Tomcat base image
-FROM tomcat:10.1-jdk17
+# Stage 1: Build and run Java program
+FROM openjdk:17-alpine AS builder
 
-COPY myapp.war C:\Program Files\tomcat\webapps/
+# Set working directory
+WORKDIR /app
 
-# Expose Tomcat port
-EXPOSE 8081
+# Copy Java source
+COPY Helloworld.java .
 
-# Start Tomcat
-CMD ["catalina.sh", "run"]
+# Compile Java
+RUN javac Helloworld.java
+
+# Run Java and save output to index.html
+RUN java HelloWorld > index.html
+
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+
+# Remove default Nginx index page
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy generated HTML from builder stage
+COPY --from=builder /app/index.html /usr/share/nginx/html/index.html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
