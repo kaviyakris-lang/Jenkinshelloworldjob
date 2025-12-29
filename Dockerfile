@@ -23,7 +23,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # COPY static/ /usr/share/nginx/html/
 
 # Expose ports: 80 for NGINX, 8080 for Java app
-EXPOSE 80 8080
+EXPOSE 80 8081
 
 # Start both NGINX and Java app
 CMD sh -c "nginx && java -jar /app/hello-world-1.0-SNAPSHOT.jar"
